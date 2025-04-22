@@ -143,3 +143,14 @@
   transform: scaleX(1);
   transform-origin: bottom left;
 }
+
+/* Optimize paint performance */
+.chart-line {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Reduce paint area */
+.hero-section {
+  contain: content;
+}

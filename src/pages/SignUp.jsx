@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUp = () => {
   const { toast } = useToast();
@@ -19,22 +21,31 @@ const SignUp = () => {
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    agreeToTerms: false
+    agreeToTerms: false,
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showVerificationDisclaimer, setShowVerificationDisclaimer] =
+    useState(false);
+
+  const toggleVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   const handleChange = (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Passwords don't match",
         description: "Please make sure your passwords match.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -43,7 +54,7 @@ const SignUp = () => {
       toast({
         title: "Terms and Conditions",
         description: "Please agree to the terms and conditions to continue.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -54,7 +65,7 @@ const SignUp = () => {
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,
-        lastName: formData.lastName
+        lastName: formData.lastName,
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -66,7 +77,7 @@ const SignUp = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="py-32">
         <div className="container mx-auto px-6">
           <div className="max-w-md mx-auto bg-card rounded-lg shadow-elegant p-8">
@@ -76,11 +87,16 @@ const SignUp = () => {
                 Join NextGEN Investments today
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName" className="text-sm font-medium mb-2">First Name</Label>
+                  <Label
+                    htmlFor="firstName"
+                    className="text-sm font-medium mb-2"
+                  >
+                    First Name
+                  </Label>
                   <Input
                     id="firstName"
                     name="firstName"
@@ -92,9 +108,14 @@ const SignUp = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="lastName" className="text-sm font-medium mb-2">Last Name</Label>
+                  <Label
+                    htmlFor="lastName"
+                    className="text-sm font-medium mb-2"
+                  >
+                    Last Name
+                  </Label>
                   <Input
                     id="lastName"
                     name="lastName"
@@ -109,7 +130,9 @@ const SignUp = () => {
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-sm font-medium mb-2">Email Address</Label>
+                <Label htmlFor="email" className="text-sm font-medium mb-2">
+                  Email Address
+                </Label>
                 <Input
                   id="email"
                   name="email"
@@ -121,50 +144,90 @@ const SignUp = () => {
                   required
                 />
               </div>
-              
+
               <div>
-                <Label htmlFor="password" className="text-sm font-medium mb-2">Password</Label>
+                <Label htmlFor="password" className="text-sm font-medium mb-2">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   className="h-12 bg-secondary"
                   placeholder="••••••••"
                   required
                 />
+                <span
+                  onClick={toggleVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "38%",
+                    top: "60%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </span>
               </div>
-              
+
               <div>
-                <Label htmlFor="confirmPassword" className="text-sm font-medium mb-2">Confirm Password</Label>
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium mb-2"
+                >
+                  Confirm Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className="h-12 bg-secondary"
                   placeholder="••••••••"
                   required
                 />
+                <span
+                  onClick={toggleVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "38%",
+                    top: "72%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </span>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="agreeToTerms" 
+                <Checkbox
+                  id="agreeToTerms"
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
-                  onCheckedChange={(checked) => setFormData({...formData, agreeToTerms: !!checked})}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, agreeToTerms: !!checked })
+                  }
                 />
-                <label 
-                  htmlFor="agreeToTerms" 
+                <label
+                  htmlFor="agreeToTerms"
                   className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+                  I agree to the{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    Privacy Policy
+                  </a>
                 </label>
               </div>
-              
+
               <Button
                 type="submit"
                 className="w-full h-12 bg-primary text-primary-foreground font-medium shadow-sm transition-apple hover:shadow-md hover:bg-primary/90 active:scale-[0.98]"
@@ -173,11 +236,14 @@ const SignUp = () => {
                 {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/signin" className="text-primary hover:text-primary/80">
+                <Link
+                  to="/signin"
+                  className="text-primary hover:text-primary/80"
+                >
                   Sign in
                 </Link>
               </p>
@@ -185,7 +251,7 @@ const SignUp = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

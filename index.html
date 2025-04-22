@@ -11,6 +11,24 @@
       href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100..900&display=swap"
       rel="stylesheet"
     />
+    <!-- Preload critical fonts -->
+    <link
+      rel="preload"
+      href="/fonts/your-font.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="/critical.css" as="style" />
+    <!-- Add to _document.js or index.html -->
+    <link
+      rel="preload"
+      as="image"
+      href="/path/to/critical-image.webp"
+      type="image/webp"
+    />
   </head>
 
   <body>

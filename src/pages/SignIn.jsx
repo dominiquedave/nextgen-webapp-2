@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { resetPassword } from "@/lib/supabase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignIn = () => {
   const { login, isAuthenticated } = useAuth();
@@ -19,8 +21,14 @@ const SignIn = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false
+    rememberMe: false,
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   // If user is already authenticated, redirect to dashboard
   if (isAuthenticated) {
@@ -28,32 +36,33 @@ const SignIn = () => {
   }
 
   const handleChange = (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       toast({
         title: "Missing Fields",
         description: "Please fill in all required fields.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       await login(formData.email, formData.password);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
       toast({
         title: "Authentication failed",
         description: error.message || "Invalid email or password.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -62,18 +71,18 @@ const SignIn = () => {
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email) {
       toast({
         title: "Email Required",
         description: "Please enter your email address to reset your password.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     setIsResettingPassword(true);
-    
+
     try {
       await resetPassword(formData.email);
       toast({
@@ -84,7 +93,7 @@ const SignIn = () => {
       toast({
         title: "Password Reset Failed",
         description: error.message || "Failed to send password reset email.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsResettingPassword(false);
@@ -94,7 +103,7 @@ const SignIn = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="py-32">
         <div className="container mx-auto px-6">
           <div className="max-w-md mx-auto bg-card rounded-lg shadow-elegant p-8">
@@ -104,7 +113,7 @@ const SignIn = () => {
                 Access your learning account
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="email" className="text-sm font-medium mb-2">
@@ -121,7 +130,7 @@ const SignIn = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="password" className="text-sm font-medium mb-2">
                   Password
@@ -129,28 +138,42 @@ const SignIn = () => {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   className="h-12 bg-secondary"
                   placeholder="••••••••"
                   required
                 />
+                <span
+                  onClick={toggleVisibility}
+                  style={{
+                    position: "absolute",
+                    right: "38%",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="rememberMe" 
+                  <Checkbox
+                    id="rememberMe"
                     name="rememberMe"
                     checked={formData.rememberMe}
-                    onCheckedChange={(checked) => setFormData({...formData, rememberMe: !!checked})}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, rememberMe: !!checked })
+                    }
                   />
                   <label htmlFor="rememberMe" className="text-sm">
                     Remember me
                   </label>
                 </div>
-                
+
                 <button
                   type="button"
                   onClick={handlePasswordReset}
@@ -160,7 +183,7 @@ const SignIn = () => {
                   {isResettingPassword ? "Sending..." : "Forgot password?"}
                 </button>
               </div>
-              
+
               <Button
                 type="submit"
                 className="w-full h-12 bg-primary text-primary-foreground font-medium"
@@ -169,11 +192,14 @@ const SignIn = () => {
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-            
+
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link to="/signup" className="text-primary hover:text-primary/80">
+                <Link
+                  to="/signup"
+                  className="text-primary hover:text-primary/80"
+                >
                   Sign up
                 </Link>
               </p>
@@ -181,7 +207,7 @@ const SignIn = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
